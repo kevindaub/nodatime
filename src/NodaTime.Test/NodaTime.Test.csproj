@@ -1,0 +1,239 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{F870636C-1018-4392-8C74-76AD498EDD66}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>NodaTime.Test</RootNamespace>
+    <AssemblyName>NodaTime.Test</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="nunit.framework, Version=2.5.2.9222, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\nunit\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ChronologyTest.cs" />
+    <Compile Include="DurationTest.cs" />
+    <Compile Include="DurationTest.Operators.cs">
+      <DependentUpon>DurationTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DurationTest.Construction.cs">
+      <DependentUpon>DurationTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Fields\DateTimeFieldBaseTest.cs" />
+    <Compile Include="Fields\DecoratedDateTimeFieldTest.cs" />
+    <Compile Include="Fields\DurationFieldBaseTest.cs" />
+    <Compile Include="Fields\FakeDurationField.cs" />
+    <Compile Include="Fields\FieldSetTest.cs" />
+    <Compile Include="Fields\MockCountingDurationField.cs" />
+    <Compile Include="Fields\OffsetDateTimeFieldTest.cs" />
+    <Compile Include="Fields\PreciseDateTimeFieldTest.cs" />
+    <Compile Include="Fields\PreciseDurationDateTimeFieldTest.cs" />
+    <Compile Include="Fields\PreciseDurationFieldTest.cs" />
+    <Compile Include="Fields\ScaledDurationTest.cs" />
+    <Compile Include="Fields\TicksDurationFieldTest.cs" />
+    <Compile Include="Fields\UnsupportedDateTimeFieldTest.cs" />
+    <Compile Include="Fields\UnsupportedDurationFieldTest.cs" />
+    <Compile Include="Fields\ZeroIsMaxDateTimeFieldTest.cs" />
+    <Compile Include="FixedDateTimeZoneTest.cs" />
+    <Compile Include="Calendars\IsoCalendarSystemTest.cs" />
+    <Compile Include="Format\PeriodFormatterBuilderTest.Options.cs">
+      <DependentUpon>PeriodFormatterBuilderTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Format\PeriodFormatterBuilderTest.Separator.cs">
+      <DependentUpon>PeriodFormatterBuilderTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Format\PeriodFormatterBuilderTest.PrefixSuffix.cs">
+      <DependentUpon>PeriodFormatterBuilderTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Format\PeriodFormatterBuilderTest.Field.cs">
+      <DependentUpon>PeriodFormatterBuilderTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Format\PeriodFormatterBuilderTest.cs" />
+    <Compile Include="Format\PeriodFormatterTest.cs" />
+    <Compile Include="Format\PeriodFormatterTest.PrintingAndParsing.cs">
+      <DependentUpon>PeriodFormatterTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Format\PeriodFormatterTest.CreationMethods.cs">
+      <DependentUpon>PeriodFormatterTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Format\PeriodFormatterTest.Mocks.cs">
+      <DependentUpon>PeriodFormatterTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Format\PeriodFormatterTest.Construction.cs">
+      <DependentUpon>PeriodFormatterTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OffsetTest.cs" />
+    <Compile Include="OffsetTest.Operators.cs">
+      <DependentUpon>OffsetTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OffsetTest.Construction.cs">
+      <DependentUpon>OffsetTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Periods\PeriodTest.SubtractMethods.cs">
+      <DependentUpon>PeriodTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Periods\PeriodTest.AddMethods.cs">
+      <DependentUpon>PeriodTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Periods\PeriodTest.WithMethods.cs">
+      <DependentUpon>PeriodTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Periods\PeriodTest.StaticCreationMethods.cs">
+      <DependentUpon>PeriodTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Periods\DaysTest.cs" />
+    <Compile Include="Periods\DaysTest.Constants.cs">
+      <DependentUpon>DaysTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Periods\DaysTest.Factories.cs">
+      <DependentUpon>DaysTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MockZeroNullIntegerConverter.cs" />
+    <Compile Include="Periods\PeriodTest.cs" />
+    <Compile Include="Periods\PeriodTypeTest.cs" />
+    <Compile Include="Periods\PeriodTypeTest.Equality.cs">
+      <DependentUpon>PeriodTypeTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Periods\PeriodTypeTest.Masking.cs">
+      <DependentUpon>PeriodTypeTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Periods\PeriodTypeTest.Types.cs">
+      <DependentUpon>PeriodTypeTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Periods\PeriodTypeTest.IndexOf.cs">
+      <DependentUpon>PeriodTypeTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Periods\PeriodTypeTest.IsSupported.cs">
+      <DependentUpon>PeriodTypeTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="InstantTest.cs" />
+    <Compile Include="InstantTest.Basics.cs">
+      <DependentUpon>InstantTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="InstantTest.Operators.cs">
+      <DependentUpon>InstantTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LocalInstantTest.cs" />
+    <Compile Include="LocalInstantTest.Basics.cs">
+      <DependentUpon>LocalInstantTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LocalInstantTest.Operators.cs">
+      <DependentUpon>LocalInstantTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Base\SingleFieldPeriodBaseTest.cs" />
+    <Compile Include="Base\SingleFieldPeriodBaseTest.Single.cs">
+      <DependentUpon>SingleFieldPeriodBaseTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TestHelper.cs" />
+    <Compile Include="TimeZones\ZoneRecurrenceTest.cs" />
+    <Compile Include="TimeZones\DtzIoHelper.cs" />
+    <Compile Include="TimeZones\ZoneTransitionTest.cs" />
+    <Compile Include="TimeZones\ReadWriteTest.cs" />
+    <Compile Include="TimeZones\TzdbTest.cs" />
+    <Compile Include="TimeZones\ZoneYearOffsetTest.cs" />
+    <Compile Include="ZonedDateTimeTest.cs" />
+    <None Include="Tests.nunit" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NodaTime\NodaTime.csproj">
+      <Project>{42B687A6-0F76-4638-A372-161C922A998B}</Project>
+      <Name>NodaTime</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.VisualBasic.PowerPacks.10.0">
+      <Visible>False</Visible>
+      <ProductName>Microsoft Visual Basic PowerPacks 10.0</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
