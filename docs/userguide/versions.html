@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <link href="prettify.css" type="text/css" rel="stylesheet" />
+    <link href="styles.css" type="text/css" rel="stylesheet" />
+    <script type="text/javascript" src="prettify.js"></script>
+    <title>Version history</title>
+  </head>
+  <body onload="prettyPrint()">
+    <h1>Version history</h1>
+    <p>Public API changes from 1.0.0-beta-1 onwards. See the <a href="http://code.google.com/p/noda-time/source/list">project repository</a> for
+more details.</p>
+
+<ul>
+<li>(1.0.0-beta2 - assumed)
+<ul>
+<li><code>LocalDate.LocalDateTime</code> property changed to <code>LocalDate.AtMidnight()</code> method</li>
+<li><code>LocalTime</code> constructor taking hours and minutes</li>
+<li><code>LocalTime</code> now implements <code>IComparable&lt;LocalTime&gt;</code></li>
+<li><code>DateTimeZone</code> providers reworked</li>
+<li>Various members made internal:</li>
+<li><code>Instant.BeginningOfTimeLabel</code> and <code>Instant.EndOfTimeLabel</code></li>
+<li><code>DateTimeZone</code> constructor</li>
+<li><code>DateTimeZone.UtcId</code></li>
+<li><code>DateTimeZone.IsFixed</code></li>
+<li><code>SystemClock.SystemNow</code> removed in favour of using <code>SystemClock.Instance.Now</code> if you really have to</li>
+<li><code>Instant.InIsoUtc</code> renamed to <code>Instant.InUtc</code></li>
+<li>Overhaul of how to get a <code>DateTimeZone</code> from an ID:</li>
+<li><code>IDateTimeZoneProvider</code> (SPI for time zones) renamed to <code>IDateTimeZoneSource</code></li>
+<li>New interface <code>IDateTimeZoneProvider</code> aimed at <em>callers</em>, with caching assumed</li>
+<li>Removed various <code>DateTimeZone</code> static methods, in favour of always going via an <code>IDateTimeZoneProvider</code> implementation</li>
+<li><code>DateTimeZoneProviders</code> added with static properties to access TZDB, BCL and default (currently TZDB) providers</li>
+<li><code>DateTimeZoneCache</code> now public and implements <code>IDateTimeZoneProvider</code></li>
+<li>New core type: <code>OffsetDateTime</code> representing a local date/time and an offset from UTC, but not full time zone information</li>
+</ul></li>
+<li>1.0.0-beta1
+<ul>
+<li>Initial beta release</li>
+</ul></li>
+</ul>
+
+  </body>
+</html>
