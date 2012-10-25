@@ -1,0 +1,187 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <link href="prettify.css" type="text/css" rel="stylesheet" />
+    <link href="styles.css" type="text/css" rel="stylesheet" />
+    <script type="text/javascript" src="prettify.js"></script>
+    <title>Release Process</title>
+  </head>
+  <body onload="prettyPrint()">
+    <h1>Release Process</h1>
+    <p>This document describes how Noda Time is released. It is intended to be used as
+a checklist by the person doing a release.</p>
+
+<h2>Prerequisites</h2>
+
+<ul>
+<li>Visual Studio 2010</li>
+<li>Sandcastle</li>
+<li>Access to the Noda Time release private key (to produce a strong-named
+assembly)</li>
+<li>TODO: anything else? Logins to nuget.org?</li>
+</ul>
+
+<p>Note that we cannot build releases on Mono at present, since they trigger a bug
+in the .NET 4 64-bit CLR (see the <a href="building.html">building and testing</a> section
+in the developer guide).</p>
+
+<h2>When to release</h2>
+
+<p>When everybody's happy, there are no issues outstanding for the milestone, and
+all the tests pass.</p>
+
+<p>Search the issue tracker for open issues with the right label (e.g.
+<code>label:Milestone-1.0</code>).</p>
+
+<p>Update to the candidate revision (probably tip) and
+<a href="building.html">build and run all the tests</a> as normal. The build and test
+steps need to pass on:</p>
+
+<ul>
+<li>Visual Studio 2010</li>
+<li>Mono 2.10.5</li>
+<li>Mono 2.10.8</li>
+</ul>
+
+<h2>Update the embedded tzdb</h2>
+
+<p>If necessary, update the version of tzdb to the latest current version,
+following the instructions in the <a href="../userguide/tzdb.html">"Updating the time zone database"</a>
+section in the user guide.</p>
+
+<h2>Making the release</h2>
+
+<p>If necessary, update the following AssemblyInfo files and NuGet package specs
+to include the version number you are building:</p>
+
+<ul>
+<li><code>src/NodaTime/Properties/AssemblyInfo.cs</code></li>
+<li><code>src/NodaTime.Testing/Properties/AssemblyInfo.cs</code></li>
+<li><code>src/NodaTime/NodaTime.nuspec</code></li>
+<li><code>src/NodaTime.Testing/NodaTime.Testing.nuspec</code></li>
+</ul>
+
+<p>The various versions should be set according to the following scheme. Suppose
+we were building version 1.2.3-beta4, then:</p>
+
+<ul>
+<li>In the NuGet package specs, <code>&lt;version&gt;</code> should contain the version number
+('1.2.3-beta4'). The <code>&lt;dependency&gt;</code> element in <code>NodaTime.Testing.nuspec</code>
+should reference the <em>initial release</em> for the major/minor version
+(i.e. '1.2.0').</li>
+<li>In the AssemblyInfo files, <code>AssemblyVersion</code> should be set to just the
+major/minor version ('1.2'). <code>AssemblyFileVersion</code> should be set to the
+major, minor, and patch version ('1.2.3'), and <code>AssemblyInformationalVersion</code>
+should be set to the version number ('1.2.3-beta4'). (See <a href="http://stackoverflow.com/a/65062">this Stack
+Overflow post</a> for more information about how these are
+used.)</li>
+</ul>
+
+<p>Add the current date and TZDB version to the version history in
+<code>tools/userguide-src/markdown/versions.txt</code> and regenerate all documentation.</p>
+
+<p>Commit the above, then tag that commit:</p>
+
+<pre class="prettyprint"><code>hg tag 1.0.0-beta1
+</code></pre>
+
+<h2>Building the release artifacts</h2>
+
+<p>First, <em>create a new clone for building the release</em>. Doing this avoids the
+need to worry about ignored files and local changes making their way into the
+source archive.</p>
+
+<p>Update to the correct revision, if you didn't specify it when cloning the
+repository:</p>
+
+<pre class="prettyprint"><code>hg up -r 1.0.0-beta1
+</code></pre>
+
+<p>Export the clean source archive:</p>
+
+<pre class="prettyprint"><code>hg archive NodaTime-1.0.0-beta1-src.zip
+</code></pre>
+
+<p>Next, get ready to build the release zipfile. Create a directory called e.g.
+<code>NodaTime-1.0.0-beta1</code> containing the following files and directories:</p>
+
+<pre class="prettyprint"><code>docs/api/
+docs/developer/
+docs/userguide/
+LICENSE.txt
+NOTICE.txt
+readme.txt
+</code></pre>
+
+<p>Now copy the Noda Time release private key (<code>NodaTime Release.snk</code>) into the
+same directory as the public key (i.e. the root) and build the release
+libaries, XML documentation, and NuGet packages:</p>
+
+<pre class="prettyprint"><code>buildnuget.bat
+</code></pre>
+
+<p>This will create e.g. <code>nuget/NodaTime.1.0.0-beta1.nupkg</code> and
+<code>nuget/NodaTime.Testing.1.0.0-beta1.nupkg</code>.</p>
+
+<p>Copy the following build outputs into the <em>root</em> of your zipfile directory:</p>
+
+<pre class="prettyprint"><code>docs/PublicApi/NodaTime.xml
+docs/PublicApi/NodaTime.Testing.xml
+src/NodaTime/bin/Signed Release/NodaTime.dll
+src/NodaTime.Testing/bin/Signed Release/NodaTime.Testing.dll
+</code></pre>
+
+<p>(These are the same files as are present in the NuGet packages.)</p>
+
+<p>Finally, create a zipfile from the zipfile directory (using the same name,
+e.g. NodaTime-1.0.0-beta1.zip).</p>
+
+<p>TODO: doing this by hand is a pain.</p>
+
+<h2>Publishing the artifacts</h2>
+
+<p>Upload the source and binary zipfiles to the
+<a href="http://code.google.com/p/noda-time/downloads/list">Google Code project</a>.
+Use the <code>Type-Source</code> label for the source zipfile, and the <code>Type-Archive</code> and
+<code>Featured</code> labels for the binary zipfile.  Remove <code>Featured</code> from the previous
+binary zipfile.</p>
+
+<p>Upload the two NuGet packages to nuget.org. TODO: How?</p>
+
+<h2>Announcing the release</h2>
+
+<p>Post to the mailing list, blog, etc.</p>
+
+<h2>Post-release branching</h2>
+
+<p>After building the first release with a given minor version number (i.e. 1.0.0,
+1.1.0), we'll need to branch before any new user-visible functionality is
+introduced (per the <a href="http://semver.org">Semantic versioning</a> spec).</p>
+
+<p>The branching model used by Noda Time is the Mercurial '<a href="http://mercurial.selenic.com/wiki/StandardBranching">standard branching</a>'
+model. In brief:</p>
+
+<ul>
+<li>feature development is carried out on the default branch</li>
+<li>named branches (called '1.0.x', '1.1.x', etc) are used for release lines</li>
+<li>fixes are typically applied to the oldest branch and forward-ported to
+each later branch in turn (ending at 'default')</li>
+</ul>
+
+<p>Note the last point, which may be surprising: Mercurial has no built in support
+for the 'backport' or 'cherrypick' model (where fixes are applied to the
+mainline and then later applied to an older branch). Instead, the fixes are
+first applied to the <em>oldest</em> branch, and then each branch is merged completely
+into the next (resolving conflicts as-needed).</p>
+
+<p>If a backport is necessary (for example, if it was not obvious that a fix
+applied to an older version), then it can be applied using <code>hg export</code> / <code>hg
+import</code> and then forward-ported as usual.</p>
+
+<p>Note also the difference between the format of names used for tags
+('1.0.0-beta2', '1.0.0') and those used for branches ('1.0.x'). Mercurial will
+allow both to be used as revision specifiers, so it is important that they do
+not collide.</p>
+
+  </body>
+</html>
