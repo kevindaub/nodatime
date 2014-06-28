@@ -97,7 +97,8 @@ namespace NodaTime
         /// <returns>The resulting date/time.</returns>
         /// <exception cref="ArgumentOutOfRangeException">The parameters do not form a valid date/time.</exception>
         public LocalDateTime(int year, int month, int day, int hour, int minute)
-            : this(year, month, day, hour, minute, CalendarSystem.Iso)
+            : this(new LocalDate(year, month, day),
+                   new LocalTime(hour, minute))
         {
         }
 
@@ -132,7 +133,8 @@ namespace NodaTime
         /// <returns>The resulting date/time.</returns>
         /// <exception cref="ArgumentOutOfRangeException">The parameters do not form a valid date/time.</exception>
         public LocalDateTime(int year, int month, int day, int hour, int minute, int second)
-            : this(year, month, day, hour, minute, second, CalendarSystem.Iso)
+            : this(new LocalDate(year, month, day),
+                   new LocalTime(hour, minute, second))
         {
         }
 
@@ -169,7 +171,8 @@ namespace NodaTime
         /// <returns>The resulting date/time.</returns>
         /// <exception cref="ArgumentOutOfRangeException">The parameters do not form a valid date/time.</exception>
         public LocalDateTime(int year, int month, int day, int hour, int minute, int second, int millisecond)
-            : this(year, month, day, hour, minute, second, millisecond, 0, CalendarSystem.Iso)
+            : this(new LocalDate(year, month, day),
+                   new LocalTime(hour, minute, second, millisecond))
         {
         }
 
@@ -207,7 +210,8 @@ namespace NodaTime
         /// <returns>The resulting date/time.</returns>
         /// <exception cref="ArgumentOutOfRangeException">The parameters do not form a valid date/time.</exception>
         public LocalDateTime(int year, int month, int day, int hour, int minute, int second, int millisecond, int tickWithinMillisecond)
-            : this(year, month, day, hour, minute, second, millisecond, tickWithinMillisecond, CalendarSystem.Iso)
+            : this(new LocalDate(year, month, day),
+                   new LocalTime(hour, minute, second, millisecond, tickWithinMillisecond))
         {
         }
 
@@ -378,10 +382,7 @@ namespace NodaTime
         [Pure]
         public DateTime ToDateTimeUnspecified()
         {
-            long days = date.DaysSinceEpoch;
-            long timeTicks = time.TickOfDay;
-            long totalTicks = NodaConstants.BclTicksAtUnixEpoch + days * NodaConstants.TicksPerStandardDay + timeTicks;
-            return new DateTime(totalTicks, DateTimeKind.Unspecified);
+            return ToLocalInstant().ToDateTimeUnspecified();
         }
 
         // FIXME(2.0): Remove... we want to kill LocalInstant
@@ -389,7 +390,7 @@ namespace NodaTime
         {
             long days = date.DaysSinceEpoch;
             long timeTicks = time.TickOfDay;
-            return new LocalInstant(days*NodaConstants.TicksPerStandardDay + timeTicks);
+            return new LocalInstant(days * NodaConstants.TicksPerStandardDay + timeTicks);
         }
 
         /// <summary>

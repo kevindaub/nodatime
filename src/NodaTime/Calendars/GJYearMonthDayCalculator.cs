@@ -8,9 +8,10 @@ namespace NodaTime.Calendars
     {
         // These arrays are NOT public. We trust ourselves not to alter the array.
         // They use zero-based array indexes so the that valid range of months is
-        // automatically checked.
-        private static readonly int[] MinDaysPerMonth = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-        private static readonly int[] MaxDaysPerMonth = { 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+        // automatically checked. They are protected so that GregorianYearMonthDayCalculator can
+        // read them.
+        protected static readonly int[] MinDaysPerMonth = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+        protected static readonly int[] MaxDaysPerMonth = { 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 
         private static readonly int[] MinTotalDaysByMonth;
         private static readonly int[] MaxTotalDaysByMonth;
@@ -67,9 +68,10 @@ namespace NodaTime.Calendars
             return new YearMonthDay(year, month, dayOfMonth);
         }
 
-        internal override int GetDaysInMonth(int year, int month)
+        internal sealed override int GetDaysInMonth(int year, int month)
         {
-            return IsLeapYear(year) ? MaxDaysPerMonth[month - 1] : MinDaysPerMonth[month - 1];
+            // We know that only February differs, so avoid the virtual call for other months.
+            return month == 2 && IsLeapYear(year) ? MaxDaysPerMonth[month - 1] : MinDaysPerMonth[month - 1];
         }
 
         protected override int GetDaysFromStartOfYearToStartOfMonth(int year, int month)

@@ -3,17 +3,22 @@
 // as found in the LICENSE.txt file.
 
 using System;
+using NodaTime.Utility;
 
 namespace NodaTime.Calendars
 {
     internal class GregorianYearMonthDayCalculator : GJYearMonthDayCalculator
     {
+        private const int MinGregorianYear = -27255;
+        private const int MaxGregorianYear = 31195;
+
         // We precompute useful values for each month between these years, as we anticipate most
         // dates will be in this range.
         private const int FirstOptimizedYear = 1900;
         private const int LastOptimizedYear = 2100;
+        // The 0-based days-since-unix-epoch for the start of each month
         private static readonly int[] MonthStartDays = new int[(LastOptimizedYear + 1 - FirstOptimizedYear) * 12 + 1];
-        private static readonly int[] MonthLengths = new int[(LastOptimizedYear + 1 - FirstOptimizedYear) * 12 + 1];
+        // The 1-based days-since-unix-epoch for the start of each year
         private static readonly int[] YearStartDays = new int[LastOptimizedYear + 1 - FirstOptimizedYear];
 
         private const int DaysFrom0000To1970 = 719527;
@@ -28,27 +33,27 @@ namespace NodaTime.Calendars
             {
                 int yearStart = instance.CalculateStartOfYearDays(year);
                 YearStartDays[year - FirstOptimizedYear] = yearStart;
-                int monthStartDay = yearStart;
+                int monthStartDay = yearStart - 1; // See field description
                 int yearMonthIndex = (year - FirstOptimizedYear) * 12;
                 for (int month = 1; month <= 12; month++)
                 {
                     yearMonthIndex++;
                     int monthLength = instance.GetDaysInMonth(year, month);
                     MonthStartDays[yearMonthIndex] = monthStartDay;
-                    MonthLengths[yearMonthIndex] = monthLength;
                     monthStartDay += monthLength;
                 }
             }
         }
 
         internal GregorianYearMonthDayCalculator()
-            : base(-27255, 31195, AverageDaysPer10Years, -719162)
+            : base(MinGregorianYear, MaxGregorianYear, AverageDaysPer10Years, -719162)
         {
         }
 
-        // TODO(2.0): Check that this is worth doing, given our normal cache.
         internal override int GetStartOfYearInDays(int year)
         {
+            // 2014-06-28: Tried removing this entirely (optimized: 5ns => 8ns; unoptimized: 11ns => 8ns)
+            // Decided to leave it in, as the optimized case is so much more common.
             if (year < FirstOptimizedYear || year > LastOptimizedYear)
             {
                 return base.GetStartOfYearInDays(year);
@@ -58,17 +63,47 @@ namespace NodaTime.Calendars
 
         internal override int GetDaysSinceEpoch(YearMonthDay yearMonthDay)
         {
-            int year = yearMonthDay.Year;
-            int monthOfYear = yearMonthDay.Month;
-            int dayOfMonth = yearMonthDay.Day;
-            int yearMonthIndex = (year - FirstOptimizedYear) * 12 + monthOfYear;
-            if (year < FirstOptimizedYear || year > LastOptimizedYear - 1 || monthOfYear < 1 || monthOfYear > 12 || dayOfMonth < 1 ||
-                dayOfMonth > MonthLengths[yearMonthIndex])
+            // 2014-06-28: Tried removing this entirely (optimized: 8ns => 13ns; unoptimized: 23ns => 19ns)
+            // Also tried computing everything lazily - it's a wash.
+            // Removed validation, however - we assume that the parameter is already valid by now.
+            unchecked
             {
-                return base.GetDaysSinceEpoch(yearMonthDay);
+                int year = yearMonthDay.Year;
+                int monthOfYear = yearMonthDay.Month;
+                int dayOfMonth = yearMonthDay.Day;
+                int yearMonthIndex = (year - FirstOptimizedYear) * 12 + monthOfYear;
+                if (year < FirstOptimizedYear || year > LastOptimizedYear - 1)
+                {
+                    return base.GetDaysSinceEpoch(yearMonthDay);
+                }
+                return MonthStartDays[yearMonthIndex] + dayOfMonth;
             }
-            // This is guaranteed not to overflow, as we've already validated the arguments
-            return unchecked(MonthStartDays[yearMonthIndex] + (dayOfMonth - 1));
+        }
+
+        internal override void ValidateYearMonthDay(int year, int month, int day)
+        {
+            ValidateGregorianYearMonthDay(year, month, day);
+        }
+
+        internal static void ValidateGregorianYearMonthDay(int year, int month, int day)
+        {
+            // Perform quick validation without calling Preconditions, then do it properly if we're going to throw
+            // an exception. Avoiding the method call is pretty extreme, but it does help.
+            if (year < MinGregorianYear || year > MaxGregorianYear || month < 1 || month > 12)
+            {
+                Preconditions.CheckArgumentRange("year", year, MinGregorianYear, MaxGregorianYear);
+                Preconditions.CheckArgumentRange("month", month, 1, 12);
+            }
+            // If we've been asked for day 1-28, we're definitely okay regardless of month.
+            if (day >= 1 && day <= 28)
+            {
+                return;
+            }
+            int daysInMonth = month == 2 && IsGregorianLeapYear(year) ? MaxDaysPerMonth[month - 1] : MinDaysPerMonth[month - 1];
+            if (day > daysInMonth)
+            {
+                Preconditions.CheckArgumentRange("day", day, 1, daysInMonth);
+            }
         }
 
         protected override int CalculateStartOfYearDays(int year)
@@ -98,7 +133,12 @@ namespace NodaTime.Calendars
 
         internal override bool IsLeapYear(int year)
         {
-            return ((year & 3) == 0) && ((year % 100) != 0 || (year % 400) == 0);
+            return IsGregorianLeapYear(year);
+        }
+
+        private static bool IsGregorianLeapYear(int year)
+        {
+            return ((year & 3) == 0) && ((year % 100) != 0 || (year % 400) == 0); ;
         }
     }
 }
